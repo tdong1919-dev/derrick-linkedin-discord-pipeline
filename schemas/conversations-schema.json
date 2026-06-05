@@ -1,0 +1,242 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Autom8 Conversations Schema",
+  "description": "Schema for the Conversations tab. One row per reply received and handled.",
+  "type": "object",
+  "google_sheet_tabs": ["Conversations", "Call_Requests"],
+
+  "conversations_tab": {
+    "description": "Tracks every reply received, its classification, and the response drafted.",
+    "column_order": [
+      "conversation_id", "lead_id", "name", "company", "platform",
+      "reply_received_date", "reply_text",
+      "reply_classification", "lead_temperature_before", "lead_temperature_after",
+      "recommended_next_action", "draft_reply",
+      "notify_founder", "notification_reason",
+      "status_update", "human_approved", "sent_date", "notes"
+    ],
+    "properties": {
+      "conversation_id": {
+        "type": "string",
+        "description": "Unique conversation entry ID. Format: CONV-001",
+        "example": "CONV-001"
+      },
+      "lead_id": {
+        "type": "string",
+        "description": "Matching lead_id from Leads tab"
+      },
+      "name": {
+        "type": "string",
+        "description": "Lead full name"
+      },
+      "company": {
+        "type": "string",
+        "description": "Lead company"
+      },
+      "platform": {
+        "type": "string",
+        "enum": ["LinkedIn", "Email", "Instagram DM"],
+        "description": "Channel where reply was received"
+      },
+      "reply_received_date": {
+        "type": "string",
+        "format": "date",
+        "description": "Date reply was received"
+      },
+      "reply_text": {
+        "type": "string",
+        "description": "The actual text of the reply from the lead"
+      },
+      "reply_classification": {
+        "type": "string",
+        "enum": [
+          "Positive Interest",
+          "Wants Demo",
+          "Wants Pricing",
+          "Wants Strategy Call",
+          "Wants Signup Link",
+          "Not Interested",
+          "Objection",
+          "Needs More Info",
+          "Bad Fit",
+          "Unclear"
+        ],
+        "description": "Intent classification from Conversation Handler"
+      },
+      "lead_temperature_before": {
+        "type": "string",
+        "enum": ["Cold", "Warm", "Hot", "Qualified"]
+      },
+      "lead_temperature_after": {
+        "type": "string",
+        "enum": ["Cold", "Warm", "Hot", "Qualified", "Closed"]
+      },
+      "recommended_next_action": {
+        "type": "string",
+        "description": "What should happen next"
+      },
+      "draft_reply": {
+        "type": "string",
+        "description": "AI-drafted reply. 2–3 sentences. Awaits human approval."
+      },
+      "notify_founder": {
+        "type": "boolean",
+        "description": "Whether this reply should trigger a notification to the founder"
+      },
+      "notification_reason": {
+        "type": "string",
+        "description": "Why the founder needs to know"
+      },
+      "status_update": {
+        "type": "string",
+        "description": "New status to apply to the lead in the Leads tab"
+      },
+      "human_approved": {
+        "type": "boolean",
+        "description": "Whether a human approved the draft reply before sending"
+      },
+      "sent_date": {
+        "type": "string",
+        "format": "date",
+        "description": "Date the reply was actually sent"
+      },
+      "notes": {
+        "type": "string",
+        "description": "Additional context"
+      }
+    }
+  },
+
+  "call_requests_tab": {
+    "description": "Tracks every lead who requests a strategy call.",
+    "column_order": [
+      "call_request_id", "date", "lead_id", "name", "company",
+      "email", "linkedin_url", "instagram_url", "platform",
+      "reply_summary", "recommended_next_action",
+      "booking_link_sent", "booking_link_sent_date",
+      "call_booked", "call_date", "call_outcome",
+      "notes"
+    ],
+    "properties": {
+      "call_request_id": {
+        "type": "string",
+        "description": "Unique call request ID. Format: CR-001",
+        "example": "CR-001"
+      },
+      "date": {
+        "type": "string",
+        "format": "date",
+        "description": "Date of call request"
+      },
+      "lead_id": {
+        "type": "string",
+        "description": "Matching lead_id"
+      },
+      "name": {
+        "type": "string"
+      },
+      "company": {
+        "type": "string"
+      },
+      "email": {
+        "type": "string",
+        "description": "Email address if known"
+      },
+      "linkedin_url": {
+        "type": "string"
+      },
+      "instagram_url": {
+        "type": "string"
+      },
+      "platform": {
+        "type": "string",
+        "enum": ["LinkedIn", "Email", "Instagram DM"]
+      },
+      "reply_summary": {
+        "type": "string",
+        "description": "Summary of what the lead said that triggered the call request"
+      },
+      "recommended_next_action": {
+        "type": "string",
+        "description": "Immediate next step for the founder"
+      },
+      "booking_link_sent": {
+        "type": "string",
+        "enum": ["Yes", "No"],
+        "default": "No"
+      },
+      "booking_link_sent_date": {
+        "type": "string",
+        "format": "date"
+      },
+      "call_booked": {
+        "type": "string",
+        "enum": ["Yes", "No", "Pending"],
+        "default": "No"
+      },
+      "call_date": {
+        "type": "string",
+        "format": "date",
+        "description": "Scheduled call date if booked"
+      },
+      "call_outcome": {
+        "type": "string",
+        "enum": [
+          "",
+          "Signed Up",
+          "Interested - Follow Up",
+          "Not a Fit",
+          "No Show",
+          "Rescheduled",
+          "Demo Scheduled",
+          "Closed Won",
+          "Closed Lost"
+        ]
+      },
+      "notes": {
+        "type": "string"
+      }
+    }
+  },
+
+  "sample_conversation_row": {
+    "conversation_id": "CONV-001",
+    "lead_id": "LEAD-001",
+    "name": "Jordan Mills",
+    "company": "Stackr Studio",
+    "platform": "LinkedIn",
+    "reply_received_date": "2026-05-16",
+    "reply_text": "Hey — yeah actually this is really timely. I've been thinking about exactly this. Would love to hop on a quick call and see how it fits with what I'm building.",
+    "reply_classification": "Wants Strategy Call",
+    "lead_temperature_before": "Hot",
+    "lead_temperature_after": "Qualified",
+    "recommended_next_action": "Add to Call_Requests. Send booking link within 2 hours. Trigger notification to founder.",
+    "draft_reply": "Absolutely — I can walk you through it and map it to your current acquisition flow. I'll send the booking link now — what's the best email to use?",
+    "notify_founder": true,
+    "notification_reason": "Lead is requesting a strategy call — high-intent, respond within 2 hours.",
+    "status_update": "Call Requested",
+    "human_approved": false,
+    "sent_date": "",
+    "notes": ""
+  },
+
+  "sample_call_request_row": {
+    "call_request_id": "CR-001",
+    "date": "2026-05-16",
+    "lead_id": "LEAD-001",
+    "name": "Jordan Mills",
+    "company": "Stackr Studio",
+    "email": "",
+    "linkedin_url": "https://linkedin.com/in/jordanmills",
+    "instagram_url": "https://instagram.com/jordanmills.builds",
+    "platform": "LinkedIn",
+    "reply_summary": "Jordan replied saying it's timely and he'd love to hop on a quick call to see how Autom8 fits with what he's building.",
+    "recommended_next_action": "Send Calendly booking link immediately. Reply on LinkedIn within 2 hours.",
+    "booking_link_sent": "No",
+    "booking_link_sent_date": "",
+    "call_booked": "No",
+    "call_date": "",
+    "call_outcome": "",
+    "notes": "High-intent lead — respond fast."
+  }
+}

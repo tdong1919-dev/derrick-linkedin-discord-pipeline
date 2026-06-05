@@ -1,0 +1,236 @@
+{
+  "name": "Autom8 — Daily Pipeline Schedule",
+  "nodes": [
+    {
+      "id": "sched-0001",
+      "name": "8:00am — Lead Research",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [200, 160],
+      "parameters": {
+        "rule": { "interval": [{ "field": "cronExpression", "expression": "0 8 * * 1-5" }] }
+      }
+    },
+    {
+      "id": "sched-0002",
+      "name": "9:00am — Outreach Drafts",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [200, 340],
+      "parameters": {
+        "rule": { "interval": [{ "field": "cronExpression", "expression": "0 9 * * 1-5" }] }
+      }
+    },
+    {
+      "id": "sched-0003",
+      "name": "9:15am — Connection Requests",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [200, 520],
+      "parameters": {
+        "rule": { "interval": [{ "field": "cronExpression", "expression": "15 9 * * 1-5" }] }
+      }
+    },
+    {
+      "id": "sched-0004",
+      "name": "9:30am — Notify Drafts Ready",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [200, 700],
+      "parameters": {
+        "rule": { "interval": [{ "field": "cronExpression", "expression": "30 9 * * 1-5" }] }
+      }
+    },
+    {
+      "id": "sched-0005",
+      "name": "Run — Lead Research",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 160],
+      "parameters": {
+        "method": "POST",
+        "url": "https://bbsleadgen.ngrok.app/pipeline/leads",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [{ "name": "x-webhook-secret", "value": "onyx14585927364" }]
+        },
+        "options": { "timeout": 10000 }
+      }
+    },
+    {
+      "id": "sched-0006",
+      "name": "Run — Outreach Drafts",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 340],
+      "parameters": {
+        "method": "POST",
+        "url": "https://bbsleadgen.ngrok.app/pipeline/outreach",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [{ "name": "x-webhook-secret", "value": "onyx14585927364" }]
+        },
+        "options": { "timeout": 10000 }
+      }
+    },
+    {
+      "id": "sched-0007",
+      "name": "Run — Connection Requests",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 520],
+      "parameters": {
+        "method": "POST",
+        "url": "https://bbsleadgen.ngrok.app/pipeline/connections",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [{ "name": "x-webhook-secret", "value": "onyx14585927364" }]
+        },
+        "options": { "timeout": 10000 }
+      }
+    },
+    {
+      "id": "sched-0008",
+      "name": "Run — Notify",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 700],
+      "parameters": {
+        "method": "POST",
+        "url": "https://bbsleadgen.ngrok.app/pipeline/notify",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [{ "name": "x-webhook-secret", "value": "onyx14585927364" }]
+        },
+        "options": { "timeout": 10000 }
+      }
+    },
+    {
+      "id": "sched-0009",
+      "name": "Did Lead Research Fail?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [760, 160],
+      "parameters": {
+        "conditions": {
+          "conditions": [{ "leftValue": "={{ $json.started }}", "rightValue": true, "operator": { "type": "boolean", "operation": "notEquals" } }],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "sched-0010",
+      "name": "Did Outreach Fail?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [760, 340],
+      "parameters": {
+        "conditions": {
+          "conditions": [{ "leftValue": "={{ $json.started }}", "rightValue": true, "operator": { "type": "boolean", "operation": "notEquals" } }],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "sched-0011",
+      "name": "Did Connections Fail?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [760, 520],
+      "parameters": {
+        "conditions": {
+          "conditions": [{ "leftValue": "={{ $json.started }}", "rightValue": true, "operator": { "type": "boolean", "operation": "notEquals" } }],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "sched-0012",
+      "name": "Did Notify Fail?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [760, 700],
+      "parameters": {
+        "conditions": {
+          "conditions": [{ "leftValue": "={{ $json.started }}", "rightValue": true, "operator": { "type": "boolean", "operation": "notEquals" } }],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "sched-0013",
+      "name": "Alert — Lead Research Error",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1040, 100],
+      "parameters": {
+        "method": "POST",
+        "url": "https://discordapp.com/api/webhooks/1505050059719315536/AfWH2GKPX5eaPFIEBLd9cbyZUzY1Hd9JjDOpO4g7_Jj-RXjxKfaExWZ-LxeMxq3sJ2TT",
+        "sendBody": true,
+        "contentType": "json",
+        "body": { "content": "⚠️ **Autom8 Pipeline Error** — `workflow:leads` failed or server unreachable at 8am.", "username": "Autom8 Pipeline Bot" }
+      }
+    },
+    {
+      "id": "sched-0014",
+      "name": "Alert — Outreach Error",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1040, 300],
+      "parameters": {
+        "method": "POST",
+        "url": "https://discordapp.com/api/webhooks/1505050059719315536/AfWH2GKPX5eaPFIEBLd9cbyZUzY1Hd9JjDOpO4g7_Jj-RXjxKfaExWZ-LxeMxq3sJ2TT",
+        "sendBody": true,
+        "contentType": "json",
+        "body": { "content": "⚠️ **Autom8 Pipeline Error** — `workflow:outreach` failed or server unreachable at 9am.", "username": "Autom8 Pipeline Bot" }
+      }
+    },
+    {
+      "id": "sched-0015",
+      "name": "Alert — Connections Error",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1040, 500],
+      "parameters": {
+        "method": "POST",
+        "url": "https://discordapp.com/api/webhooks/1505050059719315536/AfWH2GKPX5eaPFIEBLd9cbyZUzY1Hd9JjDOpO4g7_Jj-RXjxKfaExWZ-LxeMxq3sJ2TT",
+        "sendBody": true,
+        "contentType": "json",
+        "body": { "content": "⚠️ **Autom8 Pipeline Error** — `workflow:connections` failed or server unreachable at 9:15am.", "username": "Autom8 Pipeline Bot" }
+      }
+    },
+    {
+      "id": "sched-0016",
+      "name": "Alert — Notify Error",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1040, 700],
+      "parameters": {
+        "method": "POST",
+        "url": "https://discordapp.com/api/webhooks/1505050059719315536/AfWH2GKPX5eaPFIEBLd9cbyZUzY1Hd9JjDOpO4g7_Jj-RXjxKfaExWZ-LxeMxq3sJ2TT",
+        "sendBody": true,
+        "contentType": "json",
+        "body": { "content": "⚠️ **Autom8 Pipeline Error** — `workflow:notify` failed or server unreachable at 9:30am.", "username": "Autom8 Pipeline Bot" }
+      }
+    }
+  ],
+  "connections": {
+    "8:00am — Lead Research":       { "main": [[{ "node": "Run — Lead Research",       "type": "main", "index": 0 }]] },
+    "9:00am — Outreach Drafts":     { "main": [[{ "node": "Run — Outreach Drafts",     "type": "main", "index": 0 }]] },
+    "9:15am — Connection Requests": { "main": [[{ "node": "Run — Connection Requests", "type": "main", "index": 0 }]] },
+    "9:30am — Notify Drafts Ready": { "main": [[{ "node": "Run — Notify",              "type": "main", "index": 0 }]] },
+    "Run — Lead Research":       { "main": [[{ "node": "Did Lead Research Fail?",  "type": "main", "index": 0 }]] },
+    "Run — Outreach Drafts":     { "main": [[{ "node": "Did Outreach Fail?",        "type": "main", "index": 0 }]] },
+    "Run — Connection Requests": { "main": [[{ "node": "Did Connections Fail?",     "type": "main", "index": 0 }]] },
+    "Run — Notify":              { "main": [[{ "node": "Did Notify Fail?",           "type": "main", "index": 0 }]] },
+    "Did Lead Research Fail?":  { "main": [[{ "node": "Alert — Lead Research Error", "type": "main", "index": 0 }], []] },
+    "Did Outreach Fail?":       { "main": [[{ "node": "Alert — Outreach Error",      "type": "main", "index": 0 }], []] },
+    "Did Connections Fail?":    { "main": [[{ "node": "Alert — Connections Error",   "type": "main", "index": 0 }], []] },
+    "Did Notify Fail?":         { "main": [[{ "node": "Alert — Notify Error",        "type": "main", "index": 0 }], []] }
+  },
+  "active": false,
+  "settings": { "executionOrder": "v1", "saveManualExecutions": true },
+  "versionId": "autom8-schedule-v2",
+  "id": "autom8-daily-schedule",
+  "tags": [{ "name": "autom8" }, { "name": "schedule" }, { "name": "pipeline" }]
+}

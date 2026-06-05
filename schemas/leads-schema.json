@@ -1,0 +1,257 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Autom8 Leads Schema",
+  "description": "Schema for the Leads tab in the Autom8 Google Sheets CRM. One row per lead.",
+  "type": "object",
+  "google_sheet_tab": "Leads",
+  "column_order": [
+    "lead_id", "date_added", "name", "company", "role", "lead_type",
+    "linkedin_url", "website", "instagram_url", "email", "source",
+    "one_sentence_brief", "content_style", "audience_type", "growth_stage_guess",
+    "customer_acquisition_style", "operational_bottleneck_guess",
+    "brand_positioning_summary", "monetization_model_guess",
+    "engagement_signals", "buying_intent_signals",
+    "fit_score", "intent_score", "timing_score",
+    "lead_temperature", "lead_temperature_reasoning",
+    "autom8_angle", "suggested_channel_priority",
+    "suggested_first_message_angle", "recommended_action",
+    "status", "notes",
+    "date_contacted", "date_last_updated", "assigned_to"
+  ],
+  "properties": {
+    "lead_id": {
+      "type": "string",
+      "description": "Unique lead identifier. Format: LEAD-001",
+      "example": "LEAD-001"
+    },
+    "date_added": {
+      "type": "string",
+      "format": "date",
+      "description": "Date the lead was added (YYYY-MM-DD)",
+      "example": "2026-05-14"
+    },
+    "name": {
+      "type": "string",
+      "description": "Full name of the lead",
+      "example": "Jordan Mills"
+    },
+    "company": {
+      "type": "string",
+      "description": "Company or brand name",
+      "example": "Stackr Studio"
+    },
+    "role": {
+      "type": "string",
+      "description": "Lead's role or title",
+      "example": "Founder"
+    },
+    "lead_type": {
+      "type": "string",
+      "description": "Category of lead",
+      "enum": [
+        "Ecommerce Brand Owner",
+        "Shopify Store Owner",
+        "Ecommerce Founder",
+        "App Builder",
+        "SaaS Founder",
+        "CEO / Digital Business",
+        "Marketing Agency",
+        "Social Media Agency",
+        "Growth Marketer",
+        "Creator-Led Business",
+        "Coach / Consultant / Educator",
+        "Other"
+      ]
+    },
+    "linkedin_url": {
+      "type": "string",
+      "description": "Public LinkedIn profile URL. Leave blank if unknown.",
+      "example": "https://linkedin.com/in/jordanmills"
+    },
+    "website": {
+      "type": "string",
+      "description": "Company or personal website URL",
+      "example": "https://stackrstudio.com"
+    },
+    "instagram_url": {
+      "type": "string",
+      "description": "Public Instagram profile URL. Leave blank if unknown.",
+      "example": "https://instagram.com/jordanmills.builds"
+    },
+    "email": {
+      "type": "string",
+      "description": "Email address only if publicly listed. Never invent or purchase.",
+      "example": "jordan@stackrstudio.com"
+    },
+    "source": {
+      "type": "string",
+      "description": "Where this lead was discovered",
+      "example": "LinkedIn search: SaaS founder Instagram automation"
+    },
+    "one_sentence_brief": {
+      "type": "string",
+      "description": "One sentence describing what this person does"
+    },
+    "content_style": {
+      "type": "string",
+      "description": "How they use content: educational, product-led, lifestyle, community, etc."
+    },
+    "audience_type": {
+      "type": "string",
+      "description": "Who follows or buys from them"
+    },
+    "growth_stage_guess": {
+      "type": "string",
+      "enum": ["Early", "Growing", "Scaling", "Established", "Unknown"]
+    },
+    "customer_acquisition_style": {
+      "type": "string",
+      "description": "How they acquire customers: organic, paid, community, referral, content-led"
+    },
+    "operational_bottleneck_guess": {
+      "type": "string",
+      "description": "What operational challenge they likely face based on public signals"
+    },
+    "brand_positioning_summary": {
+      "type": "string",
+      "description": "How they position themselves in the market"
+    },
+    "monetization_model_guess": {
+      "type": "string",
+      "description": "How they likely make money"
+    },
+    "engagement_signals": {
+      "type": "string",
+      "description": "Observable public engagement signals: comment volume, reply threads, saves"
+    },
+    "buying_intent_signals": {
+      "type": "string",
+      "description": "Any visible signals that they are actively looking for solutions"
+    },
+    "fit_score": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10,
+      "description": "How closely this lead matches Autom8's ICP (1–10)"
+    },
+    "intent_score": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10,
+      "description": "Visible urgency and need signals (1–10)"
+    },
+    "timing_score": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10,
+      "description": "How timely or ready this lead appears to be (1–10)"
+    },
+    "lead_temperature": {
+      "type": "string",
+      "enum": ["Cold", "Warm", "Hot", "Qualified"],
+      "description": "Overall lead temperature"
+    },
+    "lead_temperature_reasoning": {
+      "type": "string",
+      "description": "One sentence explaining the temperature rating"
+    },
+    "autom8_angle": {
+      "type": "string",
+      "description": "Which Autom8 feature is most relevant for this lead"
+    },
+    "suggested_channel_priority": {
+      "type": "string",
+      "enum": ["LinkedIn", "Email", "Instagram DM", "LinkedIn + Instagram", "Mixed"],
+      "description": "Recommended first contact channel"
+    },
+    "suggested_first_message_angle": {
+      "type": "string",
+      "description": "Which pain point or use case to lead with in outreach"
+    },
+    "recommended_action": {
+      "type": "string",
+      "enum": ["Add to Queue", "Research More", "Skip", "Already Contacted"],
+      "description": "What should happen next with this lead"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "New",
+        "Queued",
+        "Connection Request Sent",
+        "Connected",
+        "Outreach Sent",
+        "No Reply",
+        "Follow Up Active",
+        "Replied Positive",
+        "Replied Unclear",
+        "Replied Objection",
+        "Not Interested",
+        "Call Requested",
+        "Demo Requested",
+        "Pricing Asked",
+        "Signup Ready",
+        "Closed Out",
+        "Deal Closed",
+        "Bad Fit"
+      ],
+      "default": "New"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Any additional observations or context"
+    },
+    "date_contacted": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of first outreach message sent"
+    },
+    "date_last_updated": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of last status update"
+    },
+    "assigned_to": {
+      "type": "string",
+      "description": "Team member handling this lead (if applicable)"
+    }
+  },
+  "required": ["lead_id", "date_added", "name", "lead_type", "lead_temperature", "status"],
+  "sample_row": {
+    "lead_id": "LEAD-001",
+    "date_added": "2026-05-14",
+    "name": "Jordan Mills",
+    "company": "Stackr Studio",
+    "role": "Founder",
+    "lead_type": "SaaS Founder",
+    "linkedin_url": "https://linkedin.com/in/jordanmills",
+    "website": "https://stackrstudio.com",
+    "instagram_url": "https://instagram.com/jordanmills.builds",
+    "email": "",
+    "source": "LinkedIn search: SaaS founder Instagram automation",
+    "one_sentence_brief": "SaaS founder building no-code tools using Instagram as primary signup acquisition channel.",
+    "content_style": "Educational + product-led, builds in public",
+    "audience_type": "Indie hackers, creators, no-code builders",
+    "growth_stage_guess": "Growing",
+    "customer_acquisition_style": "Content-led organic via Instagram and LinkedIn",
+    "operational_bottleneck_guess": "Manually responding to comments and DMs, losing leads in the noise",
+    "brand_positioning_summary": "Founder-led no-code tools brand with heavy personal brand",
+    "monetization_model_guess": "SaaS subscriptions + occasional info products",
+    "engagement_signals": "Posts regularly get 50–200 comments, reply threads visible",
+    "buying_intent_signals": "Posted about needing better systems for community engagement as product grows",
+    "fit_score": 8,
+    "intent_score": 7,
+    "timing_score": 8,
+    "lead_temperature": "Hot",
+    "lead_temperature_reasoning": "Active Instagram with high engagement and recent post about needing better systems",
+    "autom8_angle": "AI comment replies + DM flows to convert Instagram engagement into signups",
+    "suggested_channel_priority": "LinkedIn",
+    "suggested_first_message_angle": "Turning comment section into lead capture without manual work",
+    "recommended_action": "Add to Queue",
+    "status": "New",
+    "notes": "Building in public audience strongly aligned with Autom8 use case",
+    "date_contacted": "",
+    "date_last_updated": "2026-05-14",
+    "assigned_to": ""
+  }
+}

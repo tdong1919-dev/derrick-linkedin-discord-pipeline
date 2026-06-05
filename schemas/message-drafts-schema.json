@@ -1,0 +1,164 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Autom8 Message Drafts Schema",
+  "description": "Schema for the Message_Drafts tab. All outreach drafts awaiting human review and approval.",
+  "type": "object",
+  "google_sheet_tab": "Message_Drafts",
+  "column_order": [
+    "draft_id", "lead_id", "name", "company", "platform",
+    "lead_temperature", "recommended_pre_action",
+    "connection_request_note", "initial_message",
+    "follow_up_24hr", "follow_up_1", "follow_up_2",
+    "follow_up_3", "follow_up_4", "final_closeout",
+    "booking_call_message", "autom8_signup_message",
+    "recommended_cta", "personalization_used",
+    "status", "date_created", "date_approved",
+    "approved_by", "date_sent", "notes"
+  ],
+  "properties": {
+    "draft_id": {
+      "type": "string",
+      "description": "Unique draft identifier. Format: DRAFT-001",
+      "example": "DRAFT-001"
+    },
+    "lead_id": {
+      "type": "string",
+      "description": "Matching lead_id from the Leads tab",
+      "example": "LEAD-001"
+    },
+    "name": {
+      "type": "string",
+      "description": "Lead's full name"
+    },
+    "company": {
+      "type": "string",
+      "description": "Lead's company"
+    },
+    "platform": {
+      "type": "string",
+      "enum": ["LinkedIn", "Email", "Instagram DM"],
+      "description": "Channel for this outreach"
+    },
+    "lead_temperature": {
+      "type": "string",
+      "enum": ["Cold", "Warm", "Hot", "Qualified"]
+    },
+    "recommended_pre_action": {
+      "type": "string",
+      "description": "Warm-up action to take before sending: follow, connect, like a post"
+    },
+    "connection_request_note": {
+      "type": "string",
+      "maxLength": 300,
+      "description": "LinkedIn connection request note. Max 300 characters."
+    },
+    "initial_message": {
+      "type": "string",
+      "description": "First message draft. 2–3 sentences max."
+    },
+    "follow_up_24hr": {
+      "type": "string",
+      "description": "Follow-up after 24 hours with no reply. 2–3 sentences."
+    },
+    "follow_up_1": {
+      "type": "string",
+      "description": "3-day follow-up, new angle. 2–3 sentences."
+    },
+    "follow_up_2": {
+      "type": "string",
+      "description": "6-day follow-up, new angle. 2–3 sentences."
+    },
+    "follow_up_3": {
+      "type": "string",
+      "description": "9-day follow-up, new angle. 2–3 sentences."
+    },
+    "follow_up_4": {
+      "type": "string",
+      "description": "12-day follow-up, new angle. 2–3 sentences."
+    },
+    "final_closeout": {
+      "type": "string",
+      "description": "Final message. Closes the sequence. Leaves door open."
+    },
+    "booking_call_message": {
+      "type": "string",
+      "description": "Draft to send when lead requests a strategy call"
+    },
+    "autom8_signup_message": {
+      "type": "string",
+      "description": "Draft to send when lead asks for the demo or signup link. Must include https://autom8ig.io"
+    },
+    "recommended_cta": {
+      "type": "string",
+      "description": "Recommended call-to-action for this lead at current temperature"
+    },
+    "personalization_used": {
+      "type": "string",
+      "description": "Brief note on what personalization signal was used"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending_review",
+        "approved",
+        "rejected",
+        "sent",
+        "paused",
+        "expired"
+      ],
+      "default": "pending_review",
+      "description": "All drafts start as pending_review. Human must approve before sending."
+    },
+    "date_created": {
+      "type": "string",
+      "format": "date",
+      "description": "Date this draft was created"
+    },
+    "date_approved": {
+      "type": "string",
+      "format": "date",
+      "description": "Date human approved the draft"
+    },
+    "approved_by": {
+      "type": "string",
+      "description": "Name of person who approved"
+    },
+    "date_sent": {
+      "type": "string",
+      "format": "date",
+      "description": "Date the initial message was sent"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Any notes about this draft or lead"
+    }
+  },
+  "required": ["draft_id", "lead_id", "platform", "initial_message", "status"],
+  "sample_row": {
+    "draft_id": "DRAFT-001",
+    "lead_id": "LEAD-001",
+    "name": "Jordan Mills",
+    "company": "Stackr Studio",
+    "platform": "LinkedIn",
+    "lead_temperature": "Hot",
+    "recommended_pre_action": "Follow Jordan's LinkedIn profile and company page 1–2 days before sending connection request.",
+    "connection_request_note": "Hey Jordan, saw you're building Stackr Studio and using Instagram to drive product growth. Building something in the same space — would love to connect.",
+    "initial_message": "Hey Jordan, it looks like Stackr Studio has a real opportunity to turn your Instagram comment engagement into more product signups. I'm building Autom8 to help founders automate that gap between comments, DMs, and actual customers — wanted to see if it was worth a look.",
+    "follow_up_24hr": "Just following up here. If Instagram is already part of how you drive signups, Autom8 is designed to help you capture more of the conversations that usually get missed in comment threads.",
+    "follow_up_1": "One thing we're seeing with product-led founders is that the content is working — but the conversion from engagement to actual customers is still manual. That's the gap Autom8 closes.",
+    "follow_up_2": "This may or may not be a priority right now, but a simple test would be pointing Autom8 at one active post and seeing what it surfaces. Takes about 10 minutes to set up.",
+    "follow_up_3": "Curious if you've experimented with any systems for handling your Instagram engagement at scale. Happy to share what we're seeing work for similar founders.",
+    "follow_up_4": "Last follow-up — I think there's a clear fit here but I also don't want to keep pinging you. Just let me know if the timing changes.",
+    "final_closeout": "Closing the loop here. If building a better system for turning Instagram engagement into product customers ever becomes relevant, I'd love to show you what we've built at Autom8. Take care.",
+    "booking_call_message": "Great — I'll send over the booking link. A quick strategy call is the fastest way to map this to your current acquisition flow.",
+    "autom8_signup_message": "Here's the site: https://autom8ig.io. Best place to start is one active Instagram post — connect it and see how Autom8 handles the conversations.",
+    "recommended_cta": "Open to a quick strategy call?",
+    "personalization_used": "Instagram used as primary product signup channel — comment-to-customer gap visible from public activity.",
+    "status": "pending_review",
+    "date_created": "2026-05-14",
+    "date_approved": "",
+    "approved_by": "",
+    "date_sent": "",
+    "notes": ""
+  }
+}

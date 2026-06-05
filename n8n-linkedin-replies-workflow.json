@@ -1,0 +1,268 @@
+{
+  "name": "Autom8 — LinkedIn Reply Capture",
+  "nodes": [
+    {
+      "id": "reply-0001",
+      "name": "Every 30 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [200, 300],
+      "parameters": {
+        "rule": {
+          "interval": [{ "field": "minutes", "minutesInterval": 30 }]
+        }
+      }
+    },
+    {
+      "id": "reply-0002",
+      "name": "Get LinkedIn Notification Emails",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [440, 300],
+      "parameters": {
+        "operation": "getAll",
+        "filters": {
+          "sender": "messages-noreply@linkedin.com",
+          "readStatus": "unread",
+          "subject": "replied to your message"
+        },
+        "returnAll": false,
+        "limit": 20,
+        "options": {
+          "includeSpamTrash": false
+        }
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "GMAIL_CREDENTIAL_ID",
+          "name": "Gmail — Autom8 Alerts"
+        }
+      }
+    },
+    {
+      "id": "reply-0003",
+      "name": "Any Emails Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [660, 300],
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": { "type": "string", "operation": "notEmpty" }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "reply-0004",
+      "name": "Process One at a Time",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [880, 220],
+      "parameters": { "batchSize": 1, "options": {} }
+    },
+    {
+      "id": "reply-0005",
+      "name": "Parse Reply from Email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 220],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Parse LinkedIn notification email\nconst subject = $input.item.json.subject || '';\nconst body = $input.item.json.text || $input.item.json.snippet || '';\nconst emailId = $input.item.json.id;\nconst receivedAt = new Date($input.item.json.date || Date.now()).toISOString();\n\n// Extract sender name from subject\n// LinkedIn subjects: \"[Name] replied to your message\" or \"[Name] sent you a message\"\nlet senderName = '';\nconst subjectMatch = subject.match(/^(.+?)\\s+(replied to your message|sent you a message)/);\nif (subjectMatch) senderName = subjectMatch[1].trim();\n\n// Extract reply text from email body\n// LinkedIn puts the message after a line break or quote block\n// Try to extract the actual message (before quoted/footer content)\nlet replyText = body;\n\n// Remove everything after common LinkedIn footer markers\nconst footerMarkers = [\n  'View message',\n  'Unsubscribe',\n  'You are receiving',\n  'LinkedIn Corporation',\n  '© 20',\n  'Reply to this email',\n  '________________________________'\n];\nfor (const marker of footerMarkers) {\n  const idx = replyText.indexOf(marker);\n  if (idx > 0) replyText = replyText.substring(0, idx);\n}\n\n// Clean up whitespace\nreplyText = replyText.replace(/\\r\\n/g, '\\n').replace(/\\n{3,}/g, '\\n\\n').trim();\n\n// Limit to 2000 chars\nif (replyText.length > 2000) replyText = replyText.substring(0, 2000) + '...';\n\nreturn {\n  emailId,\n  senderName,\n  replyText,\n  receivedAt,\n  subject\n};"
+      }
+    },
+    {
+      "id": "reply-0006",
+      "name": "Look Up Lead in Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [1320, 220],
+      "parameters": {
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "1y9RQqETcgkVFCVAPwIzPv-09LQR3wnkNfX9Lv2J7eUM",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Leads",
+          "mode": "name"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "name",
+              "lookupValue": "={{ $json.senderName }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GOOGLE_CREDENTIAL_ID",
+          "name": "Google Sheets — Autom8"
+        }
+      }
+    },
+    {
+      "id": "reply-0007",
+      "name": "Build Reply Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1540, 220],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const parsed = $('Parse Reply from Email').first().json;\nconst lead = $input.item.json;\n\nconst leadId = lead.lead_id || '';\nconst name = lead.name || parsed.senderName || '';\nconst company = lead.company || '';\nconst replyId = 'RR-' + Date.now();\n\nreturn {\n  reply_id: replyId,\n  lead_id: leadId,\n  name,\n  company,\n  platform: 'linkedin_dm',\n  reply_text: parsed.replyText,\n  received_at: parsed.receivedAt,\n  status: 'new',\n  notes: 'Auto-captured from Gmail — ' + parsed.subject,\n  emailId: parsed.emailId\n};"
+      }
+    },
+    {
+      "id": "reply-0008",
+      "name": "Write to Inbound_Replies",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [1760, 220],
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1y9RQqETcgkVFCVAPwIzPv-09LQR3wnkNfX9Lv2J7eUM",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Inbound_Replies",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "reply_id":    "={{ $json.reply_id }}",
+            "lead_id":     "={{ $json.lead_id }}",
+            "name":        "={{ $json.name }}",
+            "company":     "={{ $json.company }}",
+            "platform":    "={{ $json.platform }}",
+            "reply_text":  "={{ $json.reply_text }}",
+            "received_at": "={{ $json.received_at }}",
+            "status":      "new",
+            "notes":       "={{ $json.notes }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GOOGLE_CREDENTIAL_ID",
+          "name": "Google Sheets — Autom8"
+        }
+      }
+    },
+    {
+      "id": "reply-0009",
+      "name": "Mark Email as Read",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1980, 220],
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $('Parse Reply from Email').first().json.emailId }}"
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "GMAIL_CREDENTIAL_ID",
+          "name": "Gmail — Autom8 Alerts"
+        }
+      }
+    },
+    {
+      "id": "reply-0010",
+      "name": "Trigger Process Replies",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2200, 220],
+      "parameters": {
+        "method": "POST",
+        "url": "https://bbsleadgen.ngrok.app/pipeline/process-replies",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [{ "name": "x-webhook-secret", "value": "onyx14585927364" }]
+        },
+        "options": { "timeout": 10000 }
+      }
+    },
+    {
+      "id": "reply-0011",
+      "name": "Also Check: Sent You a Message",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [440, 480],
+      "parameters": {
+        "operation": "getAll",
+        "filters": {
+          "sender": "messages-noreply@linkedin.com",
+          "readStatus": "unread",
+          "subject": "sent you a message"
+        },
+        "returnAll": false,
+        "limit": 20,
+        "options": { "includeSpamTrash": false }
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "GMAIL_CREDENTIAL_ID",
+          "name": "Gmail — Autom8 Alerts"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Every 30 Minutes": {
+      "main": [[
+        { "node": "Get LinkedIn Notification Emails", "type": "main", "index": 0 },
+        { "node": "Also Check: Sent You a Message",   "type": "main", "index": 0 }
+      ]]
+    },
+    "Get LinkedIn Notification Emails": {
+      "main": [[{ "node": "Any Emails Found?", "type": "main", "index": 0 }]]
+    },
+    "Also Check: Sent You a Message": {
+      "main": [[{ "node": "Any Emails Found?", "type": "main", "index": 0 }]]
+    },
+    "Any Emails Found?": {
+      "main": [
+        [{ "node": "Process One at a Time", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "Process One at a Time": {
+      "main": [[{ "node": "Parse Reply from Email", "type": "main", "index": 0 }]]
+    },
+    "Parse Reply from Email": {
+      "main": [[{ "node": "Look Up Lead in Sheets", "type": "main", "index": 0 }]]
+    },
+    "Look Up Lead in Sheets": {
+      "main": [[{ "node": "Build Reply Row", "type": "main", "index": 0 }]]
+    },
+    "Build Reply Row": {
+      "main": [[{ "node": "Write to Inbound_Replies", "type": "main", "index": 0 }]]
+    },
+    "Write to Inbound_Replies": {
+      "main": [[{ "node": "Mark Email as Read", "type": "main", "index": 0 }]]
+    },
+    "Mark Email as Read": {
+      "main": [[{ "node": "Trigger Process Replies", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": { "executionOrder": "v1", "saveManualExecutions": true },
+  "versionId": "autom8-linkedin-replies-v1",
+  "id": "autom8-linkedin-replies",
+  "tags": [{ "name": "autom8" }, { "name": "replies" }, { "name": "linkedin" }]
+}

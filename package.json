@@ -1,0 +1,38 @@
+{
+  "name": "autom8-agent-team",
+  "version": "1.0.0",
+  "description": "A complete AI-assisted outbound sales system for Autom8. Seven specialized agents working together to find qualified leads, personalize outreach, manage follow-ups, handle conversations, and notify the founder when it matters.",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev:webhook": "npx ts-node services/webhooks/server.ts",
+    "workflow:leads": "npx ts-node workflows/daily-lead-research.ts",
+    "workflow:outreach": "npx ts-node workflows/outreach-draft-queue.ts",
+    "workflow:connections": "npx ts-node workflows/connection-request-queue.ts",
+    "workflow:notify": "npx ts-node workflows/notify-drafts-ready.ts",
+    "workflow:reply": "npx ts-node workflows/handle-reply.ts",
+    "workflow:process-replies": "npx ts-node workflows/process-replies.ts",
+    "workflow:followups": "npx ts-node workflows/follow-up-sweep.ts",
+    "workflow:send-queue": "npx ts-node workflows/build-send-queue.ts",
+    "workflow:creators": "npx ts-node workflows/creator-research.ts",
+    "workflow:partnerships": "npx ts-node workflows/partnership-outreach.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.96.0",
+    "@slack/web-api": "^7.16.0",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "googleapis": "^171.4.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.8.0",
+    "npx ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
+  }
+}
