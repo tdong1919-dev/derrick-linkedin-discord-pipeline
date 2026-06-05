@@ -15,7 +15,8 @@
     "workflow:followups": "npx ts-node workflows/follow-up-sweep.ts",
     "workflow:send-queue": "npx ts-node workflows/build-send-queue.ts",
     "workflow:creators": "npx ts-node workflows/creator-research.ts",
-    "workflow:partnerships": "npx ts-node workflows/partnership-outreach.ts"
+    "workflow:partnerships": "npx ts-node workflows/partnership-outreach.ts",
+    "blog:post": "npx ts-node agents/timara-blog-agent.ts"
   },
   "keywords": [],
   "author": "",
