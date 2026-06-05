@@ -28,7 +28,7 @@
         "operation": "read",
         "documentId": {
           "__rl": true,
-          "value": "1y9RQqETcgkVFCVAPwIzPv-09LQR3wnkNfX9Lv2J7eUM",
+          "value": "YOUR_GOOGLE_SHEETS_ID",
           "mode": "id"
         },
         "sheetName": {
@@ -128,7 +128,7 @@
         "operation": "read",
         "documentId": {
           "__rl": true,
-          "value": "1y9RQqETcgkVFCVAPwIzPv-09LQR3wnkNfX9Lv2J7eUM",
+          "value": "YOUR_GOOGLE_SHEETS_ID",
           "mode": "id"
         },
         "sheetName": {
@@ -161,7 +161,7 @@
       "position": [1540, 140],
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "// Pull conversation row and lead data\nconst conv = $input.item.json;\nconst lead = $('Get Lead Details').first().json;\n\n// Merge — conversation fields take priority, fall back to lead\nconst name = conv.name || lead.name || 'Unknown';\nconst company = conv.company || lead.company || '';\nconst platform = conv.platform || lead.suggested_channel_priority || '';\nconst linkedinUrl = lead.linkedin_url || '';\nconst instagramUrl = lead.instagram_url || '';\nconst email = lead.email || '';\nconst temperature = conv.lead_temperature_after || lead.lead_temperature || '';\nconst statusUpdate = conv.status_update || '';\nconst replyText = conv.reply_text || '';\nconst draftReply = conv.draft_reply || '';\nconst notificationReason = conv.notification_reason || '';\nconst availableTimes = conv.available_times_from_lead || '';\nconst conversationId = conv.conversation_id || '';\nconst sheetRowLink = `https://docs.google.com/spreadsheets/d/1y9RQqETcgkVFCVAPwIzPv-09LQR3wnkNfX9Lv2J7eUM/edit`;\n\n// Urgency level\nconst urgentStatuses = ['Call Requested', 'Signup Ready'];\nconst highStatuses = ['Demo Requested', 'Pricing Asked', 'Qualified Lead Replied'];\nconst urgency = urgentStatuses.includes(statusUpdate) ? 'URGENT' \n              : highStatuses.includes(statusUpdate) ? 'HIGH' \n              : 'MEDIUM';\n\nconst urgencyEmoji = urgency === 'URGENT' ? '🚨' : urgency === 'HIGH' ? '⚡' : '📬';\n\n// Alert type label\nconst alertTypeMap = {\n  'Call Requested': 'a strategy call',\n  'Demo Requested': 'a demo',\n  'Pricing Asked': 'pricing info',\n  'Signup Ready': 'to sign up',\n  'Qualified Lead Replied': 'to connect (Qualified)',\n  'Hot Lead Replied': 'to connect (Hot)'\n};\nconst alertLabel = alertTypeMap[statusUpdate] || 'to connect';\n\n// Email subject\nconst subject = `Autom8 Lead Alert: ${name} wants ${alertLabel}`;\n\n// Scheduling section (only for Call Requested)\nlet schedulingBlock = '';\nif (statusUpdate === 'Call Requested') {\n  if (availableTimes) {\n    schedulingBlock = `\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nLEAD'S AVAILABLE TIMES\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n${availableTimes}\n\n→ Reply to ${name} on ${platform} confirming which time works for you.`;\n  } else {\n    schedulingBlock = `\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nSCHEDULING NOTE\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nThe draft reply above asks ${name} for 2–3 times that work for them.\nYou'll get another alert when they reply with their availability — then just confirm one time directly in the chat.`;\n  }\n}\n\n// Full email body\nconst emailBody = `Hi Crystal,\n\n${urgencyEmoji} ${urgency} — respond ${urgency === 'URGENT' ? 'within 2 hours' : urgency === 'HIGH' ? 'within 4 hours' : 'within 24 hours'}.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nLEAD\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nName:        ${name}\nCompany:     ${company}\nTemperature: ${temperature}\nChannel:     ${platform}\nStatus:      ${statusUpdate}\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nWHAT THEY SAID\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n${replyText}\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nDRAFT REPLY (approve and send manually)\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n${draftReply}${schedulingBlock}\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nCONTACT\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nLinkedIn:   ${linkedinUrl || '—'}\nInstagram:  ${instagramUrl || '—'}\nEmail:      ${email || '—'}\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nCRM ROW\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n${sheetRowLink}\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nAutom8 Sales System | Auto-generated | ${new Date().toISOString()}`;\n\n// Discord message\nconst discordMessage = `${urgencyEmoji} **Autom8 Lead Alert** — ${urgency}\\n\\n**Lead:** ${name}${company ? ` — ${company}` : ''}\\n**Status:** ${statusUpdate}\\n**Temperature:** ${temperature}\\n**Channel:** ${platform}\\n\\n**What they said:**\\n${replyText}\\n\\n**Draft reply:**\\n${draftReply}${availableTimes ? `\\n\\n**Their available times:** ${availableTimes}` : ''}\\n\\n${linkedinUrl ? `LinkedIn: ${linkedinUrl}` : ''}${instagramUrl ? `\\nInstagram: ${instagramUrl}` : ''}${email ? `\\nEmail: ${email}` : ''}\\n\\nSheet: ${sheetRowLink}`;\n\n// SMS (URGENT only, short)\nconst smsBody = `Autom8 ${urgencyEmoji} ${name}${company ? ` (${company})` : ''} wants ${alertLabel}. Check email now — reply fast.`;\n\nreturn {\n  conversationId,\n  name,\n  company,\n  platform,\n  statusUpdate,\n  urgency,\n  urgencyEmoji,\n  subject,\n  emailBody,\n  discordMessage,\n  smsBody,\n  linkedinUrl,\n  instagramUrl,\n  email,\n  leadId: conv.lead_id,\n  replyText,\n  draftReply,\n  availableTimes,\n  sheetRowLink\n};"
+        "jsCode": "// Pull conversation row and lead data\nconst conv = $input.item.json;\nconst lead = $('Get Lead Details').first().json;\n\n// Merge — conversation fields take priority, fall back to lead\nconst name = conv.name || lead.name || 'Unknown';\nconst company = conv.company || lead.company || '';\nconst platform = conv.platform || lead.suggested_channel_priority || '';\nconst linkedinUrl = lead.linkedin_url || '';\nconst instagramUrl = lead.instagram_url || '';\nconst email = lead.email || '';\nconst temperature = conv.lead_temperature_after || lead.lead_temperature || '';\nconst statusUpdate = conv.status_update || '';\nconst replyText = conv.reply_text || '';\nconst draftReply = conv.draft_reply || '';\nconst notificationReason = conv.notification_reason || '';\nconst availableTimes = conv.available_times_from_lead || '';\nconst conversationId = conv.conversation_id || '';\nconst sheetRowLink = `https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEETS_ID/edit`;\n\n// Urgency level\nconst urgentStatuses = ['Call Requested', 'Signup Ready'];\nconst highStatuses = ['Demo Requested', 'Pricing Asked', 'Qualified Lead Replied'];\nconst urgency = urgentStatuses.includes(statusUpdate) ? 'URGENT' \n              : highStatuses.includes(statusUpdate) ? 'HIGH' \n              : 'MEDIUM';\n\nconst urgencyEmoji = urgency === 'URGENT' ? '🚨' : urgency === 'HIGH' ? '⚡' : '📬';\n\n// Alert type label\nconst alertTypeMap = {\n  'Call Requested': 'a strategy call',\n  'Demo Requested': 'a demo',\n  'Pricing Asked': 'pricing info',\n  'Signup Ready': 'to sign up',\n  'Qualified Lead Replied': 'to connect (Qualified)',\n  'Hot Lead Replied': 'to connect (Hot)'\n};\nconst alertLabel = alertTypeMap[statusUpdate] || 'to connect';\n\n// Email subject\nconst subject = `Autom8 Lead Alert: ${name} wants ${alertLabel}`;\n\n// Scheduling section (only for Call Requested)\nlet schedulingBlock = '';\nif (statusUpdate === 'Call Requested') {\n  if (availableTimes) {\n    schedulingBlock = `\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nLEAD'S AVAILABLE TIMES\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n${availableTimes}\n\n→ Reply to ${name} on ${platform} confirming which time works for you.`;\n  } else {\n    schedulingBlock = `\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nSCHEDULING NOTE\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nThe draft reply above asks ${name} for 2–3 times that work for them.\nYou'll get another alert when they reply with their availability — then just confirm one time directly in the chat.`;\n  }\n}\n\n// Full email body\nconst emailBody = `Hi Crystal,\n\n${urgencyEmoji} ${urgency} — respond ${urgency === 'URGENT' ? 'within 2 hours' : urgency === 'HIGH' ? 'within 4 hours' : 'within 24 hours'}.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nLEAD\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nName:        ${name}\nCompany:     ${company}\nTemperature: ${temperature}\nChannel:     ${platform}\nStatus:      ${statusUpdate}\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nWHAT THEY SAID\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n${replyText}\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nDRAFT REPLY (approve and send manually)\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n${draftReply}${schedulingBlock}\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nCONTACT\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nLinkedIn:   ${linkedinUrl || '—'}\nInstagram:  ${instagramUrl || '—'}\nEmail:      ${email || '—'}\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nCRM ROW\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n${sheetRowLink}\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nAutom8 Sales System | Auto-generated | ${new Date().toISOString()}`;\n\n// Discord message\nconst discordMessage = `${urgencyEmoji} **Autom8 Lead Alert** — ${urgency}\\n\\n**Lead:** ${name}${company ? ` — ${company}` : ''}\\n**Status:** ${statusUpdate}\\n**Temperature:** ${temperature}\\n**Channel:** ${platform}\\n\\n**What they said:**\\n${replyText}\\n\\n**Draft reply:**\\n${draftReply}${availableTimes ? `\\n\\n**Their available times:** ${availableTimes}` : ''}\\n\\n${linkedinUrl ? `LinkedIn: ${linkedinUrl}` : ''}${instagramUrl ? `\\nInstagram: ${instagramUrl}` : ''}${email ? `\\nEmail: ${email}` : ''}\\n\\nSheet: ${sheetRowLink}`;\n\n// SMS (URGENT only, short)\nconst smsBody = `Autom8 ${urgencyEmoji} ${name}${company ? ` (${company})` : ''} wants ${alertLabel}. Check email now — reply fast.`;\n\nreturn {\n  conversationId,\n  name,\n  company,\n  platform,\n  statusUpdate,\n  urgency,\n  urgencyEmoji,\n  subject,\n  emailBody,\n  discordMessage,\n  smsBody,\n  linkedinUrl,\n  instagramUrl,\n  email,\n  leadId: conv.lead_id,\n  replyText,\n  draftReply,\n  availableTimes,\n  sheetRowLink\n};"
       }
     },
     {
@@ -171,7 +171,7 @@
       "typeVersion": 2.1,
       "position": [1760, 60],
       "parameters": {
-        "sendTo": "hello@barebranding.site",
+        "sendTo": "YOUR_EMAIL",
         "subject": "={{ $json.subject }}",
         "message": "={{ $json.emailBody }}",
         "options": {
@@ -193,7 +193,7 @@
       "position": [1760, 220],
       "parameters": {
         "method": "POST",
-        "url": "https://discordapp.com/api/webhooks/1504927649720697014/1Oco1rtFAtq6qsoybEFrf4FmqWXhONWpoLJDiJj9UOxmhRsjgNPoTskXIxW-X19_1yuL",
+        "url": "YOUR_DISCORD_WEBHOOK_URL",
         "sendBody": true,
         "contentType": "json",
         "body": {
@@ -238,7 +238,7 @@
       "parameters": {
         "operation": "send",
         "from": "YOUR_TWILIO_PHONE_NUMBER",
-        "to": "+12024101925",
+        "to": "YOUR_PHONE_NUMBER",
         "message": "={{ $json.smsBody }}"
       },
       "credentials": {
@@ -283,7 +283,7 @@
         "operation": "append",
         "documentId": {
           "__rl": true,
-          "value": "1y9RQqETcgkVFCVAPwIzPv-09LQR3wnkNfX9Lv2J7eUM",
+          "value": "YOUR_GOOGLE_SHEETS_ID",
           "mode": "id"
         },
         "sheetName": {
@@ -330,7 +330,7 @@
         "operation": "update",
         "documentId": {
           "__rl": true,
-          "value": "1y9RQqETcgkVFCVAPwIzPv-09LQR3wnkNfX9Lv2J7eUM",
+          "value": "YOUR_GOOGLE_SHEETS_ID",
           "mode": "id"
         },
         "sheetName": {
@@ -373,7 +373,7 @@
         "operation": "update",
         "documentId": {
           "__rl": true,
-          "value": "1y9RQqETcgkVFCVAPwIzPv-09LQR3wnkNfX9Lv2J7eUM",
+          "value": "YOUR_GOOGLE_SHEETS_ID",
           "mode": "id"
         },
         "sheetName": {

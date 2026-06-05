@@ -40,9 +40,10 @@ export const readRawLeads = betaZodTool({
   run: async (input) => {
     logger.tool("readRawLeads", input);
 
-    if (!input.tab_name.startsWith("import_")) {
+    const ALLOWED_PREFIXES = ["import_", "CRYSTAL_"];
+    if (!ALLOWED_PREFIXES.some((p) => input.tab_name.startsWith(p))) {
       throw new Error(
-        `tab_name must start with 'import_' (got: ${input.tab_name})`
+        `tab_name must start with one of: ${ALLOWED_PREFIXES.join(", ")} (got: ${input.tab_name})`
       );
     }
 

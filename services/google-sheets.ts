@@ -16,7 +16,8 @@ export type SheetTab =
   | "Connection_Follow_Queue"
   | "Inbound_Replies"
   | "Send_Queue"
-  | `import_${string}`;
+  | `import_${string}`
+  | `CRYSTAL_${string}`;
 
 export type WriteResult = {
   success: boolean;

@@ -49,10 +49,10 @@
       "position": [480, 160],
       "parameters": {
         "method": "POST",
-        "url": "https://bbsleadgen.ngrok.app/pipeline/leads",
+        "url": "YOUR_NGROK_URL/pipeline/leads",
         "sendHeaders": true,
         "headerParameters": {
-          "parameters": [{ "name": "x-webhook-secret", "value": "onyx14585927364" }]
+          "parameters": [{ "name": "x-webhook-secret", "value": "YOUR_WEBHOOK_SECRET" }]
         },
         "options": { "timeout": 10000 }
       }
@@ -65,10 +65,10 @@
       "position": [480, 340],
       "parameters": {
         "method": "POST",
-        "url": "https://bbsleadgen.ngrok.app/pipeline/outreach",
+        "url": "YOUR_NGROK_URL/pipeline/outreach",
         "sendHeaders": true,
         "headerParameters": {
-          "parameters": [{ "name": "x-webhook-secret", "value": "onyx14585927364" }]
+          "parameters": [{ "name": "x-webhook-secret", "value": "YOUR_WEBHOOK_SECRET" }]
         },
         "options": { "timeout": 10000 }
       }
@@ -81,10 +81,10 @@
       "position": [480, 520],
       "parameters": {
         "method": "POST",
-        "url": "https://bbsleadgen.ngrok.app/pipeline/connections",
+        "url": "YOUR_NGROK_URL/pipeline/connections",
         "sendHeaders": true,
         "headerParameters": {
-          "parameters": [{ "name": "x-webhook-secret", "value": "onyx14585927364" }]
+          "parameters": [{ "name": "x-webhook-secret", "value": "YOUR_WEBHOOK_SECRET" }]
         },
         "options": { "timeout": 10000 }
       }
@@ -97,10 +97,10 @@
       "position": [480, 700],
       "parameters": {
         "method": "POST",
-        "url": "https://bbsleadgen.ngrok.app/pipeline/notify",
+        "url": "YOUR_NGROK_URL/pipeline/notify",
         "sendHeaders": true,
         "headerParameters": {
-          "parameters": [{ "name": "x-webhook-secret", "value": "onyx14585927364" }]
+          "parameters": [{ "name": "x-webhook-secret", "value": "YOUR_WEBHOOK_SECRET" }]
         },
         "options": { "timeout": 10000 }
       }
@@ -165,7 +165,7 @@
       "position": [1040, 100],
       "parameters": {
         "method": "POST",
-        "url": "https://discordapp.com/api/webhooks/1505050059719315536/AfWH2GKPX5eaPFIEBLd9cbyZUzY1Hd9JjDOpO4g7_Jj-RXjxKfaExWZ-LxeMxq3sJ2TT",
+        "url": "YOUR_DISCORD_WEBHOOK_URL",
         "sendBody": true,
         "contentType": "json",
         "body": { "content": "⚠️ **Autom8 Pipeline Error** — `workflow:leads` failed or server unreachable at 8am.", "username": "Autom8 Pipeline Bot" }
@@ -179,7 +179,7 @@
       "position": [1040, 300],
       "parameters": {
         "method": "POST",
-        "url": "https://discordapp.com/api/webhooks/1505050059719315536/AfWH2GKPX5eaPFIEBLd9cbyZUzY1Hd9JjDOpO4g7_Jj-RXjxKfaExWZ-LxeMxq3sJ2TT",
+        "url": "YOUR_DISCORD_WEBHOOK_URL",
         "sendBody": true,
         "contentType": "json",
         "body": { "content": "⚠️ **Autom8 Pipeline Error** — `workflow:outreach` failed or server unreachable at 9am.", "username": "Autom8 Pipeline Bot" }
@@ -193,7 +193,7 @@
       "position": [1040, 500],
       "parameters": {
         "method": "POST",
-        "url": "https://discordapp.com/api/webhooks/1505050059719315536/AfWH2GKPX5eaPFIEBLd9cbyZUzY1Hd9JjDOpO4g7_Jj-RXjxKfaExWZ-LxeMxq3sJ2TT",
+        "url": "YOUR_DISCORD_WEBHOOK_URL",
         "sendBody": true,
         "contentType": "json",
         "body": { "content": "⚠️ **Autom8 Pipeline Error** — `workflow:connections` failed or server unreachable at 9:15am.", "username": "Autom8 Pipeline Bot" }
@@ -207,7 +207,7 @@
       "position": [1040, 700],
       "parameters": {
         "method": "POST",
-        "url": "https://discordapp.com/api/webhooks/1505050059719315536/AfWH2GKPX5eaPFIEBLd9cbyZUzY1Hd9JjDOpO4g7_Jj-RXjxKfaExWZ-LxeMxq3sJ2TT",
+        "url": "YOUR_DISCORD_WEBHOOK_URL",
         "sendBody": true,
         "contentType": "json",
         "body": { "content": "⚠️ **Autom8 Pipeline Error** — `workflow:notify` failed or server unreachable at 9:30am.", "username": "Autom8 Pipeline Bot" }

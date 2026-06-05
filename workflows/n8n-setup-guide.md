@@ -2,9 +2,9 @@
 
 ## What this workflow does
 Polls your Google Sheets every 15 minutes. When a lead's status becomes high-intent (Call Requested, Demo Requested, etc.), it:
-1. Sends a Gmail alert to hello@barebranding.site
+1. Sends a Gmail alert to YOUR_EMAIL
 2. Posts to your Discord lead-alerts channel
-3. Sends an SMS to +12024101925 (URGENT statuses only)
+3. Sends an SMS to YOUR_PHONE_NUMBER (URGENT statuses only)
 4. Adds a row to the Call_Requests tab (if Call Requested)
 5. Marks the row as notified so you never get duplicate alerts
 6. Updates the lead's status in the Leads tab
@@ -109,9 +109,9 @@ In n8n, click each node and look for fields with these exact strings. Or do a gl
 
 3. In n8n, click **Execute Workflow** (manual run)
 4. Check that:
-   - ✅ You received a Gmail at hello@barebranding.site
+   - ✅ You received a Gmail at YOUR_EMAIL
    - ✅ Discord channel received a message
-   - ✅ SMS received at +12024101925
+   - ✅ SMS received at YOUR_PHONE_NUMBER
    - ✅ A new row appeared in Call_Requests tab
    - ✅ The test row in Conversations now shows `notification_sent = Yes`
    - ✅ The lead's status in Leads tab updated to `Call Requested`

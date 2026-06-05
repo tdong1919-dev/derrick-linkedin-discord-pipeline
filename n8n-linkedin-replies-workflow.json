@@ -87,7 +87,7 @@
         "operation": "read",
         "documentId": {
           "__rl": true,
-          "value": "1y9RQqETcgkVFCVAPwIzPv-09LQR3wnkNfX9Lv2J7eUM",
+          "value": "YOUR_GOOGLE_SHEETS_ID",
           "mode": "id"
         },
         "sheetName": {
@@ -133,7 +133,7 @@
         "operation": "append",
         "documentId": {
           "__rl": true,
-          "value": "1y9RQqETcgkVFCVAPwIzPv-09LQR3wnkNfX9Lv2J7eUM",
+          "value": "YOUR_GOOGLE_SHEETS_ID",
           "mode": "id"
         },
         "sheetName": {
@@ -189,10 +189,10 @@
       "position": [2200, 220],
       "parameters": {
         "method": "POST",
-        "url": "https://bbsleadgen.ngrok.app/pipeline/process-replies",
+        "url": "YOUR_NGROK_URL/pipeline/process-replies",
         "sendHeaders": true,
         "headerParameters": {
-          "parameters": [{ "name": "x-webhook-secret", "value": "onyx14585927364" }]
+          "parameters": [{ "name": "x-webhook-secret", "value": "YOUR_WEBHOOK_SECRET" }]
         },
         "options": { "timeout": 10000 }
       }
